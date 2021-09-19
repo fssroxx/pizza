@@ -2,7 +2,6 @@ import React from 'react';
 import styled from "styled-components";
 import {pizzaRed} from "../styles/colors";
 import {Title} from "../styles/title";
-import {Banner} from "../Banner/Banner";
 
 export const NavbarStyled = styled.div`
     background-color: ${pizzaRed};
