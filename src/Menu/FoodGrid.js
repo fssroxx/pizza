@@ -18,13 +18,20 @@ export const Food = styled(Title)`
     padding:10px;
     font-size: 20px;
     border-radius: 11px;
-    box-shadow: 1px 0px 7px 1px black;
+    box-shadow: 0px 0px 0px 0px grey;
+    margin-top: 5px;
     background-image: ${({img}) => `url(${img})`};
     background-position: center;
     background-size: cover;
     filter: contrast(75%);
+    transition-property: box-shadow margin-top filter;
+    transition-duration: .1s;
     &:hover {
-    cursor: pointer;
-    opacity: 0.7;
+        cursor: pointer;
+        margin-top: 0px;
+        margin-bottom: 5px;
+        box-shadow: 1px 0px 7px 1px grey;
+        filter: contrast(100%);
     }
 `
+//! падинг боттом чтобы не скакали карточки снизу
