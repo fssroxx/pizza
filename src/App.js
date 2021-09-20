@@ -4,6 +4,7 @@ import {Banner} from "./Banner/Banner";
 import {Menu} from "./Menu/Menu";
 import {GlobalStyle} from "./styles/GlobalStyles";
 import {FoodDialog} from "./FoodDialog/FoodDialog";
+import {Order} from "./Order/Order";
 
 
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
             <Banner/>
             <FoodDialog openedFood={openedFood} setOpenedFood={setOpenedFood}/>
             <Menu setOpenedFood={setOpenedFood}/>
+            <Order/>
         </>
     );
 };
