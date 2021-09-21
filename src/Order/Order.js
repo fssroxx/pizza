@@ -1,6 +1,7 @@
 
 import styled from 'styled-components';
 import {DialogContent, DialogFooter, ConfirmButton} from "../FoodDialog/FoodDialog";
+import React from "react";
 
 const OrderStyled = styled.div`
     position: fixed;
@@ -20,12 +21,25 @@ const OrderContent = styled(DialogContent)`
     height: 100%;
 `
 
-export function Order() {
+const OrderContainer = styled.div`
+    padding: 10px 0;
+    border-bottom: 1px solid gray;
+`
+
+const OrderItem = styled.div`
+    padding: 10px 0;
+`
+
+export function Order({orders}) {
+
     return (
         <OrderStyled>
-            <OrderContent>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis, eum?
-            </OrderContent>
+                {orders.length === 0 ? (<OrderContent>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis, eum</OrderContent> )
+                    : (<OrderContent>
+                        <OrderContainer> Your order is: </OrderContainer>
+                        {orders.map((order, i) => <OrderContainer key={i}> <OrderItem> {order.name} </OrderItem> </OrderContainer> )}
+                    </OrderContent>)
+                    }
             <DialogFooter>
                 <ConfirmButton>
                     Checkout

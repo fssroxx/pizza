@@ -4,6 +4,7 @@ import React from "react";
 import {FoodLabel} from "../Menu/FoodGrid";
  import {pizzaRed} from "../styles/colors";
 import {Title} from "../styles/title";
+import {formatPrice} from "../Data/FoodData";
 
 const Dialog = styled.div`
     position:fixed;
@@ -64,8 +65,20 @@ const DialogBannerName = styled(FoodLabel)`
     font-size: 30px;
 `;
 
-export function FoodDialog({openedFood, setOpenedFood}) {
+export function FoodDialog({openedFood, setOpenedFood, setOrders, orders}) {
     const close = () => setOpenedFood()
+
+    if(!openedFood) return null;
+
+    const order = {
+        name: openedFood.name
+    }
+
+    const addToOrder = () => {
+        setOrders([...orders, order]);
+        close();
+    }
+
     return (openedFood ? (
         <>
             <DialogShadow onClick={close}/>
@@ -77,8 +90,8 @@ export function FoodDialog({openedFood, setOpenedFood}) {
 
                 </DialogContent>
                 <DialogFooter>
-                    <ConfirmButton>
-                        Confirm
+                    <ConfirmButton onClick={addToOrder}>
+                        Add to order {formatPrice(openedFood.price)}
                     </ConfirmButton>
                 </DialogFooter>
             </Dialog>
