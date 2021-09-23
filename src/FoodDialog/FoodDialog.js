@@ -5,6 +5,8 @@ import {FoodLabel} from "../Menu/FoodGrid";
  import {pizzaRed} from "../styles/colors";
 import {Title} from "../styles/title";
 import {formatPrice} from "../Data/FoodData";
+import {QuantityInput} from "./QuantityInput";
+import {useQuantity} from "../Hooks/useQuantity";
 
 const Dialog = styled.div`
     position:fixed;
@@ -29,6 +31,7 @@ const DialogBanner = styled.div`
 export const DialogContent = styled.div`
     overflow: auto;
     min-height: 100px;
+    padding: 0 40px;
 `
 
 export const ConfirmButton = styled(Title)`
@@ -65,19 +68,26 @@ const DialogBannerName = styled(FoodLabel)`
     font-size: 30px;
 `;
 
-export function FoodDialog({openedFood, setOpenedFood, setOrders, orders}) {
+export const getPrice = (order) => {
+    return order.price * order.quantity
+}
+
+function FoodDialogContainer({openedFood, setOpenedFood, setOrders, orders}) {
+    const quantity = useQuantity();
     const close = () => setOpenedFood()
 
     if(!openedFood) return null;
 
     const order = {
-        name: openedFood.name
+        ...openedFood ,
+        quantity: quantity.value
     }
 
     const addToOrder = () => {
         setOrders([...orders, order]);
         close();
     }
+
 
     return (openedFood ? (
         <>
@@ -87,14 +97,19 @@ export function FoodDialog({openedFood, setOpenedFood, setOrders, orders}) {
                     <DialogBannerName>{openedFood.name}</DialogBannerName>
                 </DialogBanner>
                 <DialogContent>
-
+                    <QuantityInput quantity={quantity}/>
                 </DialogContent>
                 <DialogFooter>
                     <ConfirmButton onClick={addToOrder}>
-                        Add to order {formatPrice(openedFood.price)}
+                        Add to order {formatPrice(getPrice(order))}
                     </ConfirmButton>
                 </DialogFooter>
             </Dialog>
         </>
     ): null)
+}
+
+export function FoodDialog(props) {
+    if(!props.openedFood) return null;
+    return <FoodDialogContainer {...props}/>
 }

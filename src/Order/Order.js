@@ -1,7 +1,8 @@
 
 import styled from 'styled-components';
-import {DialogContent, DialogFooter, ConfirmButton} from "../FoodDialog/FoodDialog";
+import {DialogContent, DialogFooter, ConfirmButton, getPrice} from "../FoodDialog/FoodDialog";
 import React from "react";
+import {formatPrice} from "../Data/FoodData";
 
 const OrderStyled = styled.div`
     position: fixed;
@@ -28,6 +29,8 @@ const OrderContainer = styled.div`
 
 const OrderItem = styled.div`
     padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
 `
 
 export function Order({orders}) {
@@ -37,7 +40,14 @@ export function Order({orders}) {
                 {orders.length === 0 ? (<OrderContent>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis, eum</OrderContent> )
                     : (<OrderContent>
                         <OrderContainer> Your order is: </OrderContainer>
-                        {orders.map((order, i) => <OrderContainer key={i}> <OrderItem> {order.name} </OrderItem> </OrderContainer> )}
+                        {orders.map((order, i) =>
+                            <OrderContainer key={i}>
+                                <OrderItem>
+                                    <div> {order.quantity} </div>
+                                    <div> {order.name} </div>
+                                    <div>{formatPrice(getPrice(order))}</div>
+                                </OrderItem>
+                            </OrderContainer> )}
                     </OrderContent>)
                     }
             <DialogFooter>
