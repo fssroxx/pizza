@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {DialogContent, DialogFooter, ConfirmButton, getPrice} from "../FoodDialog/FoodDialog";
 import React from "react";
 import {formatPrice} from "../Data/FoodData";
+import {useToppings} from "../Hooks/useToppings";
 
 const OrderStyled = styled.div`
     position: fixed;
@@ -33,8 +34,13 @@ const OrderItem = styled.div`
     justify-content: space-between;
 `
 
-export function Order({orders}) {
+const DetailItem = styled.div`
+    color: gray;
+    font-size: 10px;
+`
 
+export function Order({orders}) {
+    const toppings = useToppings()
     const subTotal = orders.reduce((total, order) => {
             return total + getPrice(order)
         }, 0)
@@ -53,6 +59,13 @@ export function Order({orders}) {
                                     <div> {order.name} </div>
                                     <div>{formatPrice(getPrice(order))}</div>
                                 </OrderItem>
+                                <DetailItem>
+                                    {order.toppings
+                                        .filter(t => t.checked)
+                                        .map(topping => topping.name)
+                                        .join(', ')
+                                    }
+                                </DetailItem>
                             </OrderContainer> )}
                             <OrderContainer>
                                 <OrderItem>
