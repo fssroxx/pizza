@@ -26,6 +26,18 @@ const OrderContent = styled(DialogContent)`
 const OrderContainer = styled.div`
     padding: 10px 0;
     border-bottom: 1px solid gray;
+    ${({editable}) => editable ? `
+       &:hover {
+       cursor: pointer;
+       background-color: #e7e7e7;
+       }
+    `
+    : 
+    `
+        pointer-events: none;
+    `}
+    
+    
 `
 
 const OrderItem = styled.div`
@@ -39,7 +51,7 @@ const DetailItem = styled.div`
     font-size: 10px;
 `
 
-export function Order({orders}) {
+export function Order({orders, setOrders, setOpenedFood, setDisplay}) {
     const toppings = useToppings()
     const subTotal = orders.reduce((total, order) => {
             return total + getPrice(order)
@@ -47,16 +59,29 @@ export function Order({orders}) {
 
     const tax = subTotal * 0.07;
     const total = subTotal + tax;
+
+    const deleteItem = (index) => {
+        const newOrders = [...orders];
+        newOrders.splice(index, 1);
+        setOrders(newOrders);
+    }
     return (
         <OrderStyled>
-                {orders.length === 0 ? (<OrderContent>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis, eum</OrderContent> )
+                {orders.length === 0 ? (<OrderContent>
+                        Your order's looking pretty empty.</OrderContent> )
                     : (<OrderContent>
                         <OrderContainer> Your order is: </OrderContainer>
-                        {orders.map((order, i) =>
-                            <OrderContainer key={i}>
-                                <OrderItem>
+                        {orders.map((order, index) =>
+                            <OrderContainer editable key={index}>
+                                <OrderItem
+                                    onClick={() => setOpenedFood({...order, index})}>
                                     <div> {order.quantity} </div>
                                     <div> {order.name} </div>
+                                    <div style={{cursor:"pointer"}}
+                                          onClick={ (e) => {
+                                        e.stopPropagation();
+                                        deleteItem(index);
+                                    }} >🗑️</div>
                                     <div>{formatPrice(getPrice(order))}</div>
                                 </OrderItem>
                                 <DetailItem>
@@ -66,6 +91,7 @@ export function Order({orders}) {
                                         .join(', ')
                                     }
                                 </DetailItem>
+                                {order.choice && <DetailItem>{order.choice}</DetailItem>}
                             </OrderContainer> )}
                             <OrderContainer>
                                 <OrderItem>
@@ -84,7 +110,7 @@ export function Order({orders}) {
                     </OrderContent>)
                     }
             <DialogFooter>
-                <ConfirmButton>
+                <ConfirmButton onClick={() => setDisplay('block')}>
                     Checkout
                 </ConfirmButton>
             </DialogFooter>

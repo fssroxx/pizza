@@ -9,21 +9,23 @@ import {QuantityInput} from "./QuantityInput";
 import {useQuantity} from "../Hooks/useQuantity";
 import {Toppings} from "./Toppings";
 import {useToppings} from "../Hooks/useToppings";
+import {Choices} from "./Choises";
+import {useChoice} from "../Hooks/useChoice";
 
 
-const Dialog = styled.div`
+export const Dialog = styled.div`
     position:fixed;
     width: 500px;
     top: 75px;
     background-color: white;
     z-index: 5;
     max-height: calc(100% - 100px);
-    left: calc(50% - 250px);
+    left: calc(50% - 400px);
     display: flex;
     flex-direction: column;
 `
 
-const DialogBanner = styled.div`
+export const DialogBanner = styled.div`
     min-height: 200px;
     margin-bottom: 20px; 
     ${({img}) => `background-image: url(${img});`}
@@ -48,6 +50,13 @@ export const ConfirmButton = styled(Title)`
     width: 200px;
     cursor: pointer;
     background-color: ${pizzaRed}
+    ${({disabled}) => disabled &&
+    `
+    opacity: .5;
+    background-color: grey;
+    pointer-events: none;
+    `
+}
 `
 
 export const DialogFooter = styled.div`
@@ -57,7 +66,7 @@ export const DialogFooter = styled.div`
     justify-content: center;
 `
 
-const DialogShadow = styled.div`
+export const DialogShadow = styled.div`
     position: fixed;
     height: 100%;
     width: 100%;
@@ -66,7 +75,7 @@ const DialogShadow = styled.div`
     opacity: 0.7;
     z-index: 4;
 `
-const DialogBannerName = styled(FoodLabel)`
+export const DialogBannerName = styled(FoodLabel)`
     top: 100px;
     padding: 5px 40px;
     font-size: 30px;
@@ -89,25 +98,36 @@ function hasToppings(food) {
 
 function FoodDialogContainer({openedFood, setOpenedFood, setOrders, orders}) {
     const quantity = useQuantity();
-    const close = () => setOpenedFood();
-    const toppings = useToppings(openedFood.toppings)
 
+    const toppings = useToppings(openedFood.toppings);
+    const choiceRadio = useChoice(openedFood.choice);
+    const isEditing = openedFood.index > -1;
 
-    if(!openedFood) return null;
+    function close() {
+        setOpenedFood()
+    };
+
 
     const order = {
         ...openedFood ,
         quantity: quantity.value,
-        toppings: toppings.toppings
+        toppings: toppings.toppings,
+        choice: choiceRadio.value
     }
-
+    //* функция для редактирования заказа
+    function editOrder() {
+        const newOrders = [...orders];
+        newOrders[openedFood.index] = order;
+        setOrders(newOrders);
+        close();
+    }
     const addToOrder = () => {
         setOrders([...orders, order]);
         close();
     }
 
 
-    return (openedFood ? (
+    return  (
         <>
             <DialogShadow onClick={close}/>
             <Dialog>
@@ -119,16 +139,22 @@ function FoodDialogContainer({openedFood, setOpenedFood, setOrders, orders}) {
                     {hasToppings(openedFood) && <>
                         <h3>Would U like toppings?</h3>
                         <Toppings {...toppings}/>
+
                     </>}
+                    {openedFood.choices && <Choices openFood={openedFood} choiceRadio={choiceRadio}/>}
                 </DialogContent>
                 <DialogFooter>
-                    <ConfirmButton onClick={addToOrder}>
-                        Add to order {formatPrice(getPrice(order))}
+                    <ConfirmButton
+                        onClick={isEditing ? editOrder : addToOrder}
+                        disabled={openedFood.choices && !choiceRadio.value}
+                    >
+                        {isEditing ? `Update order ` : `Add to order `}
+                        {formatPrice(getPrice(order))}
                     </ConfirmButton>
                 </DialogFooter>
             </Dialog>
         </>
-    ): null)
+    )
 }
 
 export function FoodDialog(props) {

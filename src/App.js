@@ -8,19 +8,23 @@ import {Order} from "./Order/Order";
 import {useOpenDialog} from "./Hooks/useOpenDialog";
 import {useOrders} from "./Hooks/useOrders";
 import {useTitle} from "./Hooks/useTitle";
+import {MadeBy} from "./Menu/MadeByFssRoxx";
+import {useMadeBy} from "./Hooks/useMadeBy";
 
 const App = () => {
     const openedDialog = useOpenDialog();
     const orders = useOrders();
     useTitle({...openedDialog, ...orders});
+    const display = useMadeBy();
 
     return (
         <>
             <GlobalStyle/>
             <Navbar/>
             <Banner/>
-            <Order {...orders}/>
+            <Order {...orders} {...openedDialog} {...display}/>
             <FoodDialog {...openedDialog} {...orders}/>
+            <MadeBy {...display}/>
             <Menu {...openedDialog}/>
         </>
     );

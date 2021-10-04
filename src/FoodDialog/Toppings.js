@@ -21,6 +21,7 @@ export function Toppings({toppings, checkTopping}) {
                 (<CheckboxLabel>
                     <ToppingCheckbox
                         type="checkbox"
+                        checked={topping.checked}
                         onClick={() =>
                             checkTopping(i)}/>
                     {topping.name}
